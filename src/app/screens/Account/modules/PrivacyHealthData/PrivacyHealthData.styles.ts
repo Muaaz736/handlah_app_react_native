@@ -1,0 +1,153 @@
+import { StyleSheet } from 'react-native';
+import type { RoleTheme } from '../../../../../types/roleManager.types';
+import FONTS from '../../../../../utils/fonts';
+import colors from '../../../../../utils/colors';
+
+export const makePrivacyHealthDataStyles = (theme: RoleTheme) =>
+  StyleSheet.create({
+  container: { flex: 1, backgroundColor: theme.background },
+  safeArea: { flex: 1 },
+  scrollView: { flex: 1 },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 40,
+  },
+  optionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: theme.border,
+  },
+  optionLabel: {
+    flex: 1,
+    fontSize: 16,
+    color: theme.textPrimary,
+    fontFamily: FONTS.display_regular,
+    marginRight: 16,
+  },
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContainer: {
+    backgroundColor: theme.background,
+    borderRadius: 20,
+    width: '100%',
+    maxHeight: '85%',
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontFamily: FONTS.display_bold,
+    color: theme.textPrimary,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    fontFamily: FONTS.display_regular,
+    color: theme.textPrimary,
+    textAlign: 'center',
+    marginBottom: 16,
+    lineHeight: 20,
+  },
+  disableModalSubtitle: {
+    fontSize: 14,
+    fontFamily: FONTS.display_regular,
+    color: theme.textPrimary,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalBody: { maxHeight: 300, marginBottom: 16 },
+  sectionTitle: {
+    fontSize: 14,
+    fontFamily: FONTS.display_bold,
+    color: theme.textPrimary,
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  bulletList: { marginBottom: 4 },
+  bulletItem: {
+    fontSize: 13,
+    fontFamily: FONTS.display_regular,
+    color: theme.textPrimary,
+    lineHeight: 20,
+    marginBottom: 2,
+  },
+  withdrawText: {
+    fontSize: 13,
+    fontFamily: FONTS.display_regular,
+    color: theme.textPrimary,
+    lineHeight: 20,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 20,
+    gap: 10,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 1.5,
+    borderColor: theme.textSecondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 2,
+    flexShrink: 0,
+  },
+  consentText: {
+    flex: 1,
+    fontSize: 13,
+    fontFamily: FONTS.display_regular,
+    color: theme.textPrimary,
+    lineHeight: 18,
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  disableModalFooter: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  cancelButton: {
+    flex: 1,
+    paddingVertical: 13,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: theme.border,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    fontSize: 15,
+    fontFamily: FONTS.display_medium,
+    color: theme.textPrimary,
+  },
+  enableButton: {
+    flex: 1,
+    paddingVertical: 13,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  enableButtonDisabled: { opacity: 0.45 },
+  enableButtonText: {
+    fontSize: 15,
+    fontFamily: FONTS.display_medium,
+    color: theme.surface,
+  },
+});

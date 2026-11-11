@@ -1,0 +1,22 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+    </style>
+
+    <!-- Splash Screen Theme -->
+    <!--
+      android:windowFullscreen and android:windowDrawsSystemBarBackgrounds are
+      deprecated as of API 35, where edge-to-edge is enforced and they no longer
+      have any effect. Play Console flags them as "deprecated APIs or parameters
+      for edge-to-edge"; the splash already draws behind the system bars without
+      them.
+    -->
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/splash_screen_drawable</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+</resources>

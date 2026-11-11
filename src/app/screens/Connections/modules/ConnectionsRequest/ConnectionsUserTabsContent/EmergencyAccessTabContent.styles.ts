@@ -1,0 +1,61 @@
+import { StyleSheet } from 'react-native';
+import FONTS from '../../../../../../utils/fonts';
+import type { RoleTheme } from '../../../../../../types/roleManager.types';
+
+export const makeEmergencyAccessStyles = (theme: RoleTheme) =>
+  StyleSheet.create({
+    sectionContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: '30%' },
+    container: { paddingHorizontal: 16, paddingBottom: 20 },
+    section: { marginBottom: 24 },
+    sectionTitle: { fontSize: 20, fontFamily: FONTS.display_bold, color: theme.textPrimary, marginBottom: 16, textAlign: 'left' },
+    listContainer: { gap: 10 },
+    title: { fontSize: 18, fontFamily: FONTS.display_bold, color: theme.textPrimary, textAlign: 'center' },
+    subtitle: { fontSize: 16, fontFamily: FONTS.display_regular, width: '80%', textAlign: 'center', color: theme.textPrimary },
+    itemWrapper: { position: 'relative' },
+    emptyStateContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 60, paddingBottom: 40, gap: 16 },
+    button: { paddingVertical: 18, width: '80%' },
+    pendingButton: { backgroundColor: '#F9C88E', opacity: 1 },
+    pendingButtonText: { fontFamily: FONTS.display_bold },
+    selectorWrapper: { marginBottom: 24, zIndex: 10 },
+    selectedCard: {
+      flexDirection: 'row', alignItems: 'center',
+      backgroundColor: theme.surface,
+      borderRadius: 16, paddingHorizontal: 14, paddingVertical: 14,
+      shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.06, shadowRadius: 6, elevation: 2, gap: 12,
+    },
+    avatar: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+    avatarText: { fontSize: 24, fontFamily: FONTS.display_bold },
+    avatarSmall: { width: 36, height: 36, borderRadius: 18 },
+    avatarTextSmall: { fontSize: 14 },
+    cardTextContainer: { flex: 1, gap: 2 },
+    cardTitle: { fontSize: 15, fontFamily: FONTS.display_bold, color: theme.textPrimary },
+    cardSubtitle: { fontSize: 12, fontFamily: FONTS.display_regular, color: theme.textSecondary },
+    dropdownList: {
+      marginTop: 6, borderRadius: 16,
+      backgroundColor: theme.surface,
+      overflow: 'hidden',
+      shadowColor: '#000', shadowOffset: { width: 10, height: 10 },
+      shadowOpacity: 0.1, shadowRadius: 8, elevation: 4,
+    },
+    dropdownItem: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 12, gap: 12 },
+    dropdownItemBorder: { borderBottomWidth: 1, borderBottomColor: theme.border },
+    dropdownItemText: { fontSize: 14, fontFamily: FONTS.display_regular, color: theme.textPrimary },
+    dropdownItemTextSelected: { fontFamily: FONTS.display_bold },
+    dropdownItemSubtitle: { fontSize: 12, fontFamily: FONTS.display_regular, color: theme.textSecondary },
+    checkmark: { fontSize: 18, marginLeft: 4 },
+    overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+    modalContainer: {
+      backgroundColor: theme.surface,
+      borderTopLeftRadius: 24, borderTopRightRadius: 24,
+      padding: 24, gap: 8,
+    },
+    modalTitle: { fontSize: 18, fontFamily: FONTS.display_bold, color: theme.textPrimary, marginBottom: 4 },
+    modalSubtitle: { fontSize: 14, fontFamily: FONTS.display_regular, color: theme.textSecondary, marginBottom: 12 },
+    reasonInput: {
+      borderWidth: 1, borderColor: theme.border, borderRadius: 12,
+      padding: 14, fontSize: 14, fontFamily: FONTS.display_regular,
+      color: theme.textPrimary, minHeight: 100, marginBottom: 8,
+    },
+    modalButton: { width: '100%' },
+  });

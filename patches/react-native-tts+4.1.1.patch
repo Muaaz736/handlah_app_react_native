@@ -1,0 +1,149 @@
+diff --git a/node_modules/react-native-tts/android/build.gradle b/node_modules/react-native-tts/android/build.gradle
+index dbbe046..95810bd 100644
+--- a/node_modules/react-native-tts/android/build.gradle
++++ b/node_modules/react-native-tts/android/build.gradle
+@@ -3,30 +3,38 @@ def safeExtGet(prop, fallback) {
+ }
+ 
+ buildscript {
+-    repositories {
+-        jcenter()
+-    }
++    // The Android Gradle plugin is only required when opening the android folder stand-alone.
++    // This avoids unnecessary downloads and potential conflicts when the library is included as a
++    // module dependency in an application project. jcenter() is also gone as of Gradle 7+, so it
++    // can't be resolved here anyway.
++    if (project == rootProject) {
++        repositories {
++            google()
++            mavenCentral()
++        }
+ 
+-    dependencies {
+-        classpath 'com.android.tools.build:gradle:1.3.1'
++        dependencies {
++            classpath 'com.android.tools.build:gradle:7.4.2'
++        }
+     }
+ }
+ 
+ apply plugin: 'com.android.library'
+ 
+ android {
+-    compileSdkVersion safeExtGet('compileSdkVersion', 26)
++    compileSdkVersion safeExtGet('compileSdkVersion', 36)
+     buildToolsVersion safeExtGet('buildToolsVersion', '26.0.3')
+ 
+     defaultConfig {
+-        minSdkVersion safeExtGet('minSdkVersion', 16)
+-        targetSdkVersion safeExtGet('targetSdkVersion', 26)
++        minSdkVersion safeExtGet('minSdkVersion', 24)
++        targetSdkVersion safeExtGet('targetSdkVersion', 36)
+         versionCode 1
+         versionName "1.0"
+     }
+ }
+ 
+ repositories {
++    google()
+     mavenCentral()
+ }
+ 
+diff --git a/node_modules/react-native-tts/ios/TextToSpeech/TextToSpeech.m b/node_modules/react-native-tts/ios/TextToSpeech/TextToSpeech.m
+index 1e769cc..c7d0f7d 100644
+--- a/node_modules/react-native-tts/ios/TextToSpeech/TextToSpeech.m
++++ b/node_modules/react-native-tts/ios/TextToSpeech/TextToSpeech.m
+@@ -90,49 +90,59 @@ RCT_EXPORT_METHOD(speak:(NSString *)text
+         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
+     }
+ 
+-    [self.synthesizer speakUtterance:utterance];
++    // AVSpeechSynthesizer must be driven from the main thread, otherwise a later
++    // stopSpeakingAtBoundary: call (which also runs off the bridge queue) is ignored.
++    dispatch_async(dispatch_get_main_queue(), ^{
++        [self.synthesizer speakUtterance:utterance];
++    });
+     resolve([NSNumber numberWithUnsignedLong:utterance.hash]);
+ }
+ 
+-RCT_EXPORT_METHOD(stop:(BOOL *)onWordBoundary resolve:(RCTPromiseResolveBlock)resolve reject:(__unused RCTPromiseRejectBlock)reject)
++// NOTE: BOOL (not BOOL *). The New Architecture bridge/interop in RN 0.83
++// rejects `BOOL *` params with "Objective C type BOOL is unsupported", so every
++// call to stop()/pause() threw before ever reaching the synthesizer.
++RCT_EXPORT_METHOD(stop:(BOOL)onWordBoundary resolve:(RCTPromiseResolveBlock)resolve reject:(__unused RCTPromiseRejectBlock)reject)
+ {
+-    AVSpeechBoundary boundary;
+-
+-    if(onWordBoundary != NULL && onWordBoundary) {
+-        boundary = AVSpeechBoundaryWord;
+-    } else {
+-        boundary = AVSpeechBoundaryImmediate;
+-    }
+-
+-    BOOL stopped = [self.synthesizer stopSpeakingAtBoundary:boundary];
++    AVSpeechBoundary boundary = onWordBoundary ? AVSpeechBoundaryWord : AVSpeechBoundaryImmediate;
++
++    // AVSpeechSynthesizer must be driven from the main thread or the request is
++    // silently ignored. If it still reports speaking afterwards (queued utterances
++    // / iOS 16+ quirk), replace the synthesizer outright — that guarantees silence.
++    dispatch_async(dispatch_get_main_queue(), ^{
++        [self.synthesizer stopSpeakingAtBoundary:boundary];
++        if (self.synthesizer.speaking || self.synthesizer.paused) {
++            self.synthesizer.delegate = nil;
++            self.synthesizer = [AVSpeechSynthesizer new];
++            self.synthesizer.delegate = self;
++            [self sendEventWithName:@"tts-cancel" body:@{}];
++        }
++    });
+ 
+-    resolve([NSNumber numberWithBool:stopped]);
++    resolve(@(YES));
+ }
+ 
+-RCT_EXPORT_METHOD(pause:(BOOL *)onWordBoundary resolve:(RCTPromiseResolveBlock)resolve reject:(__unused RCTPromiseRejectBlock)reject)
++RCT_EXPORT_METHOD(pause:(BOOL)onWordBoundary resolve:(RCTPromiseResolveBlock)resolve reject:(__unused RCTPromiseRejectBlock)reject)
+ {
+-    AVSpeechBoundary boundary;
+-
+-    if(onWordBoundary != NULL && onWordBoundary) {
+-        boundary = AVSpeechBoundaryWord;
+-    } else {
+-        boundary = AVSpeechBoundaryImmediate;
+-    }
++    AVSpeechBoundary boundary = onWordBoundary ? AVSpeechBoundaryWord : AVSpeechBoundaryImmediate;
+ 
+-    BOOL paused = [self.synthesizer pauseSpeakingAtBoundary:boundary];
++    dispatch_async(dispatch_get_main_queue(), ^{
++        [self.synthesizer pauseSpeakingAtBoundary:boundary];
++    });
+ 
+-    resolve([NSNumber numberWithBool:paused]);
++    resolve(@(YES));
+ }
+ 
+ RCT_EXPORT_METHOD(resume:(RCTPromiseResolveBlock)resolve reject:(__unused RCTPromiseRejectBlock)reject)
+ {
+-    BOOL continued = [self.synthesizer continueSpeaking];
++    dispatch_async(dispatch_get_main_queue(), ^{
++        [self.synthesizer continueSpeaking];
++    });
+ 
+-    resolve([NSNumber numberWithBool:continued]);
++    resolve(@(YES));
+ }
+ 
+ 
+-RCT_EXPORT_METHOD(setDucking:(BOOL *)ducking
++RCT_EXPORT_METHOD(setDucking:(BOOL)ducking
+                   resolve:(RCTPromiseResolveBlock)resolve
+                   reject:(__unused RCTPromiseRejectBlock)reject)
+ {
+@@ -178,7 +188,7 @@ RCT_EXPORT_METHOD(setDefaultVoice:(NSString *)identifier
+ }
+ 
+ RCT_EXPORT_METHOD(setDefaultRate:(float)rate
+-                  skipTransform:(BOOL *)skipTransform // not used, compatibility with Android native module signature
++                  skipTransform:(BOOL)skipTransform // not used, compatibility with Android native module signature
+                   resolve:(RCTPromiseResolveBlock)resolve
+                   reject:(RCTPromiseRejectBlock)reject)
+ {
